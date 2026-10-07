@@ -1508,196 +1508,364 @@ section {
   background: var(--bg);
 }
 
-.projects-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 48px;
-  gap: 24px;
+/* Header — konsisten dgn section Tentang (label + judul besar + garis hijau) */
+.projects-header {
+  margin-bottom: 40px;
 }
 
-.filter-tabs {
+.projects-rule {
+  width: 56px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 14px;
+}
+
+/* Grid kartu — satu kolom; tambah objek di projectsList utk kartu berikutnya */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+/* --- KARTU PROYEK (stretched link: seluruh kartu = <a>) --- */
+.project-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 34px;
+  align-items: stretch;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Pratinjau kiri */
+.project-media {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--accent-light);
+  aspect-ratio: 16 / 10;
+}
+
+.project-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Placeholder elegan (hijau muda + ikon grafik) bila screenshot belum ada */
+.project-media-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 20px;
+  background:
+    radial-gradient(120% 120% at 20% 0%, rgba(26, 107, 74, 0.14), rgba(26, 107, 74, 0.05)),
+    var(--accent-light);
+  color: var(--accent);
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-media-placeholder-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.project-media-placeholder-sub {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  max-width: 240px;
+  line-height: 1.5;
+}
+
+/* Detail kanan */
+.project-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.project-body-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.project-num {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.project-categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.filter-tab {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 7px 16px;
-  border-radius: var(--radius-full);
-  border: 1.5px solid var(--border-strong);
-  background: transparent;
-  color: var(--text-muted);
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.filter-tab:hover,
-.filter-tab.active {
-  background: var(--text-primary);
-  color: var(--bg);
-  border-color: var(--text-primary);
-}
-
-/* Projects — editorial numbered list layout */
-.projects-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.project-item {
-  display: grid;
-  grid-template-columns: 64px 1fr auto;
-  gap: 24px;
-  align-items: start;
-  padding: 32px 0;
-  border-bottom: 1px solid var(--border);
-  transition: background-color 0.3s var(--ease-out-expo),
-              padding 0.3s var(--ease-out-expo),
-              margin 0.3s var(--ease-out-expo),
-              border-radius 0.3s var(--ease-out-expo);
-  cursor: pointer;
-  position: relative;
-}
-
-.project-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--accent);
-  transform: scaleY(0);
-  transition: transform 0.3s var(--ease-out-expo);
-}
-
-.project-item:first-child {
-  border-top: 1px solid var(--border);
-}
-
-.project-item:hover,
-.project-item:focus-visible {
-  background: var(--accent-light);
-  padding-left: 20px;
-  padding-right: 16px;
-  margin-left: -20px;
-  margin-right: -16px;
-  border-radius: var(--radius-sm);
-}
-
-.project-item:hover::before,
-.project-item:focus-visible::before {
-  transform: scaleY(1);
-}
-
-.project-number {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-light);
-  padding-top: 4px;
-}
-
-.project-number span {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.project-divider-line {
-  width: 32px;
-  height: 1.5px;
-  background: var(--accent);
-  margin-top: 10px;
-}
-
-.project-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 6px 12px;
 }
 
 .project-category {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.project-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  transition: color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-subtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.project-card-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-top: 12px;
+}
+
+/* Peran saya */
+.project-role {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.project-role-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
-.project-title {
-  font-family: var(--font-heading);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+.project-role-value {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
-.project-desc {
-  font-size: 0.92rem;
-  color: var(--text-muted);
-  line-height: 1.65;
-  max-width: 560px;
-}
-
-.project-tags {
+/* Chip tech stack */
+.project-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 14px;
 }
 
-.tag-chip {
+.project-chip {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-strong);
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-  transition: var(--transition);
-}
-
-.project-item:hover .tag-chip {
-  border-color: var(--accent-border);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
   color: var(--accent);
+  background: rgba(26, 107, 74, 0.06);
+  border: 1px solid rgba(26, 107, 74, 0.22);
+  border-radius: 999px;
+  padding: 5px 12px;
+  white-space: nowrap;
 }
 
-.project-action {
+/* Highlight bernomor */
+.project-highlights {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.project-highlights li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.project-hl-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  padding-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+/* Aksi bawah */
+.project-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 4px;
-  flex-shrink: 0;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 20px;
 }
 
-.project-btn-detail {
+.project-cta-live {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-family: var(--font-heading);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  border: 1.5px solid var(--border-strong);
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
-  cursor: pointer;
-  background: transparent;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  min-height: 44px;
 }
 
-.project-btn-detail:hover,
-.project-item:hover .project-btn-detail {
-  border-color: var(--accent);
-  color: var(--accent);
+/* Tombol "Kode" — berada di atas stretched link */
+.project-cta-code {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  min-height: 44px;
+  background: var(--bg-card);
+  transition: color 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Garis hijau bawah yg memanjang saat hover (scaleX 0 -> 1) */
+.project-card-line {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Ikon panah pojok */
+.project-corner {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--bg-card);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+/* --- HOVER (hanya perangkat dengan hover) --- */
+@media (hover: hover) {
+  .project-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-border);
+    box-shadow: 0 18px 40px -18px rgba(26, 107, 74, 0.28);
+  }
+
+  .project-card:hover .project-media img,
+  .project-card:hover .project-media-placeholder {
+    transform: scale(1.03);
+  }
+
+  .project-card:hover .project-card-title {
+    color: var(--accent);
+  }
+
+  .project-card:hover .project-corner {
+    transform: translate(4px, -4px);
+    color: var(--accent);
+    border-color: var(--accent-border);
+  }
+
+  .project-card:hover .project-card-line {
+    transform: scaleX(1);
+  }
+
+  .project-card:hover .project-chip {
+    border-color: var(--accent-border);
+    background: rgba(26, 107, 74, 0.1);
+  }
+
+  .project-cta-code:hover {
+    color: var(--accent);
+    border-color: var(--accent-border);
+    background: var(--accent-light);
+  }
+}
+
+/* Fokus keyboard */
+.project-card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.project-cta-code:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ===== CONTACT SECTION ===== */
@@ -2130,7 +2298,12 @@ section {
   .btn-primary:hover,
   .social-icon-btn:hover,
   .btn-primary:active,
-  .social-icon-btn:active {
+  .social-icon-btn:active,
+  .project-card:hover,
+  .project-card:hover .project-media img,
+  .project-card:hover .project-media-placeholder,
+  .project-card:hover .project-corner,
+  .project-card:hover .project-card-line {
     transform: none;
     box-shadow: none;
   }
@@ -2164,19 +2337,28 @@ section {
 }
 
 @media (max-width: 768px) {
-  .projects-header-row {
-    flex-direction: column;
-    align-items: flex-start;
+  /* Kartu proyek: satu kolom (pratinjau di atas, teks di bawah) */
+  .projects-header {
+    margin-bottom: 28px;
   }
 
-  .project-item {
-    grid-template-columns: 40px 1fr;
-    gap: 12px;
-    padding: 16px 12px;
+  .project-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px;
   }
 
-  .project-action {
-    display: none;
+  .project-card-title {
+    font-size: 1.4rem;
+  }
+
+  .project-corner {
+    top: 14px;
+    right: 14px;
+  }
+
+  .project-actions {
+    gap: 10px;
   }
 
   /* Mobile: menu tengah digantikan hamburger + dropdown (tidak ada teks menumpuk) */

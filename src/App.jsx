@@ -13,6 +13,7 @@ import {
   Globe,
   MapPin,
   ArrowRight,
+  ArrowUpRight,
   Circle,
   Database,
   BookOpen,
@@ -36,6 +37,12 @@ const InstagramIcon = ({ size = 18 }) => (
   </svg>
 );
 
+const GithubIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+  </svg>
+);
+
 const WhatsAppIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
@@ -43,99 +50,35 @@ const WhatsAppIcon = ({ size = 18 }) => (
 );
 
 /* ===== DATA ===== */
-const projectDatabase = {
-  'pricing-dashboard': {
-    category: 'Pricing Strategy & Business Intelligence',
-    title: 'Dashboard Analitik & Strategi Penetapan Harga Retail',
-    desc: 'Dashboard analitik interaktif berbasis web yang dibangun untuk memvisualisasikan elastisitas harga, tren pergerakan margin kotor produk, serta menyediakan simulator interaktif bagi tim komersial/bisnis dalam menguji skenario perubahan harga terhadap proyeksi volume penjualan.',
+/* ===== DATA PROYEK (pisah dari markup — tambah objek baru di sini untuk proyek berikutnya) ===== */
+const projectsList = [
+  {
+    id: 'pangantrack',
+    num: '01',
+    title: 'PanganTrack',
+    subtitle: 'Sistem Prediksi Harga Komoditas Pangan Indonesia',
+    desc: 'Dashboard interaktif untuk memantau dan memproyeksikan harga 21 komoditas pangan pokok di 9 wilayah Indonesia (plus tingkat nasional) hingga 24 bulan ke depan, memakai recursive forecasting.',
+    role: 'Machine Learning & Modeling (tim 3 orang, Kelompok 9)',
+    techStack: ['LightGBM', 'Ridge Regression', 'Scikit-Learn', 'FastAPI', 'Chart.js', 'Vercel', 'Render'],
     highlights: [
-      'Eksplorasi data penjualan & harga (EDA) dari ribuan transaksi retail untuk mendeteksi korelasi elastisitas permintaan.',
-      'Visualisasi distribusi harga interaktif dengan Chart.js dilengkapi kuadran matriks margin vs volume.',
-      'Simulator penetapan harga real-time berbasis web yang memungkinkan pengambil keputusan memprediksi dampak diskon terhadap laba.',
-      'Antarmuka interaktif yang mudah dipahami tanpa perlu membuka notebook pemrograman.'
+      'Pemilihan model otomatis per komoditas: LightGBM (utama), Ridge Regression (komoditas volatil, cegah overfitting), Naive baseline sebagai pembanding.',
+      'Prediksi hingga 24 bulan dengan grafik historis vs prediksi dan tabel perbandingan wilayah.',
+      'Insight tren otomatis (naik/turun) untuk membantu antisipasi inflasi daerah.'
     ],
-    techStack: ['Chart.js', 'Exploratory Data Analysis (EDA)', 'Python (Pandas)', 'JavaScript (ES6+)', 'Jupyter Lab', 'CSS Grid/Flexbox']
-  },
-  'skola': {
-    category: 'Decision Support System & Policy Analytics',
-    title: 'Skola — Sistem Analisis & Rekomendasi Kebijakan Pendidikan',
-    desc: 'Sistem rekomendasi analitik berbasis knowledge engine yang menganalisis basis data fasilitas dan infrastruktur sekolah dasar di berbagai provinsi Indonesia. Proyek ini bertujuan membantu instansi pemerintah dalam menetapkan prioritas intervensi anggaran secara objektif berdasarkan indikator ketimpangan mutu.',
-    highlights: [
-      'Analisis multivariat kondisi sekolah dasar (rasio kerusakan ruang kelas, sanitasi layak, ketersediaan listrik & jaringan internet).',
-      'Dashboard visualisasi komparatif antar wilayah dengan pemetaan tingkat urgensi intervensi daerah.',
-      'Modul narasi otomatis hasil analisis yang menerjemahkan angka metrik menjadi rekomendasi kebijakan tertulis.',
-      'Pengujian skenario kebijakan untuk alokasi dana bantuan pendidikan yang lebih merata.'
-    ],
-    techStack: ['Knowledge-Based AI Engine', 'Python', 'FastAPI', 'Chart.js', 'Multi-Criteria Evaluation', 'Pandas']
-  },
-  'dwh-clustering': {
-    category: 'Data Segmentation & Scientific Research',
-    title: 'Analisis Segmentasi & Komparasi K-Means vs Gaussian Mixture Model',
-    desc: 'Studi komparasi analitik mendalam pada data inventori gudang untuk menentukan pengelompokan barang berdasarkan pola perputaran stok dan nilai kapital. Membandingkan algoritma K-Means (hard clustering) vs Gaussian Mixture Model (probabilistic soft clustering) yang dituangkan dalam naskah publikasi jurnal ilmiah.',
-    highlights: [
-      'Eksplorasi dan pembersihan data inventori (data preprocessing & normalisasi fitur numerik).',
-      'Evaluasi klaster komparatif menggunakan Silhouette Analysis, Davies-Bouldin Index, serta BIC dan AIC.',
-      'Penyusunan visualisasi scatter plot berdimensi tereduksi untuk memetakan klaster produk bernilai tinggi vs perputaran cepat.',
-      'Penyusunan naskah artikel ilmiah berbasis temuan empiris evaluasi performa kedua algoritma.'
-    ],
-    techStack: ['Python', 'scikit-learn', 'GMM Clustering', 'K-Means', 'Silhouette Evaluation', 'PostgreSQL', 'Matplotlib & Seaborn']
-  },
-  'ml-pipeline': {
-    category: 'Big Data Processing & Predictive Analytics',
-    title: 'Automated ML & Big Data Analytics Framework',
-    desc: 'Implementasi alur pengolahan dan evaluasi data skala besar dari basis data heterogen. Berfokus pada otomasi ekstraksi fitur (feature engineering) dan perbandingan performa beberapa model analitik prediktif menggunakan Apache Spark MLlib dan Hive.',
-    highlights: [
-      'Otomatisasi tahapan feature engineering dan transformasi data skala besar dengan PySpark.',
-      'Penyusunan query analitis SQL kompleks di Apache Hive untuk agregasi metrik historis.',
-      'Evaluasi metrik akurasi, Precision, Recall, dan ROC-AUC pada model prediktif secara tersistematis.'
-    ],
-    techStack: ['Apache Spark (PySpark)', 'Apache Hive SQL', 'Python', 'Docker', 'Predictive Modeling']
+    liveUrl: 'https://pangan-track.vercel.app/',
+    codeUrl: 'https://github.com/nicolausprima/PanganTrack',
+    categories: ['Machine Learning', 'Forecasting', 'Web Dashboard'],
+    // Ganti null di bawah dengan '/assets/pangantrack.webp' setelah screenshot dashboard tersedia
+    image: null,
+    imageAlt: 'Tampilan dashboard PanganTrack'
   }
-};
+];
 
 /* Frasa bergantian untuk efek typing di hero (frasa pertama = utama) */
 const HERO_TYPING_PHRASES = [
   'DATA ANALYST & BUSINESS INTELLIGENCE ENTHUSIAST',
   'EXPLORATORY DATA ANALYSIS & DASHBOARD',
   'DATA MODELING & RISET'
-];
-
-const projectsList = [  {
-    id: 'pricing-dashboard',
-    filterType: 'bi',
-    num: '01',
-    category: 'Pricing Strategy & BI',
-    title: 'Dashboard Analitik & Simulator Penetapan Harga Retail',
-    desc: 'Visualisasi interaktif matriks harga vs volume transaksi dan simulasi elastisitas keuntungan bagi manajer bisnis.',
-    tags: ['Chart.js', 'EDA', 'Python', 'Interactive UI']
-  },
-  {
-    id: 'skola',
-    filterType: 'decision',
-    num: '02',
-    category: 'Decision Support & Policy',
-    title: 'Skola: Sistem Analisis & Rekomendasi Kebijakan Pendidikan',
-    desc: 'Knowledge-based decision engine untuk memetakan disparitas mutu fasilitas sekolah dasar di seluruh provinsi.',
-    tags: ['Policy Analytics', 'Multi-Criteria', 'FastAPI', 'Pandas']
-  },
-  {
-    id: 'dwh-clustering',
-    filterType: 'research',
-    num: '03',
-    category: 'Segmentation & Research',
-    title: 'Analisis Komparasi K-Means vs Gaussian Mixture Model (GMM)',
-    desc: 'Studi komparasi klasterisasi pada data perputaran inventori pergudangan untuk naskah publikasi ilmiah.',
-    tags: ['GMM', 'K-Means', 'Silhouette Score', 'scikit-learn']
-  },
-  {
-    id: 'ml-pipeline',
-    filterType: 'research',
-    num: '04',
-    category: 'Big Data & ML Framework',
-    title: 'Automated ML & Big Data Analytics Framework',
-    desc: 'Pipeline pengolahan data terdistribusi dan pemodelan prediktif otomatis dengan PySpark dan Hive.',
-    tags: ['PySpark', 'Apache Hive', 'Feature Eng.', 'Docker']
-  }
 ];
 
 const skills = [
@@ -149,8 +92,6 @@ const skills = [
 /* ===== COMPONENT ===== */
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [projectFilter, setProjectFilter] = useState('all');
-  const [activeModalId, setActiveModalId] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -502,12 +443,6 @@ export default function App() {
     showToast(`${label} berhasil disalin!`);
   };
 
-  const filteredProjects = projectFilter === 'all'
-    ? projectsList
-    : projectsList.filter(p => p.filterType === projectFilter);
-
-  const modalData = activeModalId ? projectDatabase[activeModalId] : null;
-
   return (
     <div className="portfolio-app">
       <a href="#main-content" className="skip-link">Lewati ke konten utama</a>
@@ -836,67 +771,110 @@ export default function App() {
       {/* ===== PROJECTS SECTION ===== */}
       <section id="projects" className="projects-section" aria-labelledby="projects-heading">
         <div className="container">
-          <div className="projects-header-row io-reveal" style={{ '--d': '0ms' }}>
-            <div>
-              <div className="section-eyebrow">03 — Portofolio & Studi Kasus</div>
-              <h2 id="projects-heading" className="section-title">Selected<br />Projects</h2>
-              <p className="section-body" style={{ marginTop: 10, maxWidth: 400 }}>
-                Koleksi proyek nyata: analisis statistik, dashboard visual, dan simulasi keputusan berbasis data.
-              </p>
-            </div>
-            <div className="filter-tabs" role="tablist" aria-label="Filter proyek">
-              <button className={`filter-tab ${projectFilter === 'all' ? 'active' : ''}`} onClick={() => setProjectFilter('all')} role="tab" aria-selected={projectFilter === 'all'}>
-                Semua (4)
-              </button>
-              <button className={`filter-tab ${projectFilter === 'bi' ? 'active' : ''}`} onClick={() => setProjectFilter('bi')} role="tab" aria-selected={projectFilter === 'bi'}>
-                Pricing & BI
-              </button>
-              <button className={`filter-tab ${projectFilter === 'decision' ? 'active' : ''}`} onClick={() => setProjectFilter('decision')} role="tab" aria-selected={projectFilter === 'decision'}>
-                Decision Support
-              </button>
-              <button className={`filter-tab ${projectFilter === 'research' ? 'active' : ''}`} onClick={() => setProjectFilter('research')} role="tab" aria-selected={projectFilter === 'research'}>
-                Data & ML
-              </button>
-            </div>
+          {/* Header — konsisten dgn section Tentang (label bernomor + judul besar + garis hijau) */}
+          <div className="projects-header io-reveal" style={{ '--d': '0ms' }}>
+            <div className="section-eyebrow">03 — Proyek</div>
+            <h2 id="projects-heading" className="section-title">Proyek Pilihan</h2>
+            <div className="projects-rule" aria-hidden="true"></div>
+            <p className="section-body" style={{ marginTop: 14, maxWidth: 520 }}>
+              Kumpulan proyek data & machine learning yang saya bangun — dari riset hingga dashboard interaktif yang siap dipakai.
+            </p>
           </div>
 
-          <div className="projects-list" role="tabpanel">
-            {filteredProjects.map((p, i) => (
-              <article
-                className="project-item io-reveal"
-                style={{ '--d': `${i * 80}ms` }}
+          {/* Grid kartu — tambah objek di projectsList untuk menampilkan kartu berikutnya */}
+          <div className="projects-grid">
+            {projectsList.map((p, i) => (
+              <a
+                className="project-card io-reveal"
+                style={{ '--d': `${120 + i * 80}ms` }}
                 key={p.id}
-                onClick={() => setActiveModalId(p.id)}
-                onKeyDown={(e) => e.key === 'Enter' && setActiveModalId(p.id)}
-                tabIndex={0}
-                role="button"
-                aria-haspopup="dialog"
-                aria-label={`Lihat detail proyek: ${p.title}`}
+                href={p.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Buka ${p.title} (live demo)`}
               >
-                {/* Number + divider line */}
-                <div>
-                  <div className="project-number"><span>{p.num}</span></div>
-                  <div className="project-divider-line"></div>
+                {/* Kiri: pratinjau */}
+                <div className="project-media">
+                  {p.image ? (
+                    <img
+                      src={p.image}
+                      alt={p.imageAlt}
+                      loading="lazy"
+                      decoding="async"
+                      width="1600"
+                      height="1000"
+                    />
+                  ) : (
+                    /* Placeholder — ganti image di data dengan '/assets/pangantrack.webp' */
+                    <div className="project-media-placeholder" role="img" aria-label={p.imageAlt}>
+                      <LineChart size={44} strokeWidth={1.25} aria-hidden="true" />
+                      <span className="project-media-placeholder-title">{p.title}</span>
+                      <span className="project-media-placeholder-sub">{p.subtitle}</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Info */}
-                <div className="project-info">
-                  <div className="project-category">{p.category}</div>
-                  <h3 className="project-title">{p.title}</h3>
-                  <p className="project-desc">{p.desc}</p>
-                  <div className="project-tags">
-                    {p.tags.map((t, i) => <span className="tag-chip" key={i}>{t}</span>)}
+                {/* Kanan: detail */}
+                <div className="project-body">
+                  <div className="project-body-top">
+                    <span className="project-num" aria-hidden="true">{p.num}</span>
+                    <div className="project-categories">
+                      {p.categories.map((c, k) => (
+                        <span className="project-category" key={k}>{c}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <h3 className="project-card-title">{p.title}</h3>
+                  <p className="project-subtitle">{p.subtitle}</p>
+                  <p className="project-card-desc">{p.desc}</p>
+
+                  <div className="project-role">
+                    <span className="project-role-label">Peran saya</span>
+                    <span className="project-role-value">{p.role}</span>
+                  </div>
+
+                  <div className="project-chips">
+                    {p.techStack.map((t, k) => (
+                      <span className="project-chip" key={k}>{t}</span>
+                    ))}
+                  </div>
+
+                  <ul className="project-highlights">
+                    {p.highlights.map((h, k) => (
+                      <li key={k}>
+                        <span className="project-hl-num" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="project-actions">
+                    <span className="project-cta-live">
+                      Lihat Live Demo
+                      <ExternalLink size={14} aria-hidden="true" />
+                    </span>
+                    <a
+                      className="project-cta-code"
+                      href={p.codeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Buka kode sumber ${p.title} di GitHub`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <GithubIcon size={14} />
+                      Kode
+                    </a>
                   </div>
                 </div>
 
-                {/* CTA button */}
-                <div className="project-action">
-                  <button className="project-btn-detail">
-                    Detail
-                    <ExternalLink size={13} />
-                  </button>
-                </div>
-              </article>
+                {/* Garis hijau bawah yang memanjang saat hover */}
+                <span className="project-card-line" aria-hidden="true"></span>
+                {/* Ikon panah pojok */}
+                <span className="project-corner" aria-hidden="true">
+                  <ArrowUpRight size={18} />
+                </span>
+              </a>
             ))}
           </div>
         </div>
@@ -975,44 +953,6 @@ export default function App() {
           </div>
         </div>
       </section>
-
-      {/* ===== MODAL ===== */}
-      {modalData && (
-        <div className="modal-backdrop" onClick={() => setActiveModalId(null)} role="dialog" aria-modal="true" aria-labelledby="modal-title">
-          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setActiveModalId(null)} aria-label="Tutup modal">
-              <X size={18} />
-            </button>
-
-            <div className="modal-eyebrow">{modalData.category}</div>
-            <h3 id="modal-title" className="modal-title">{modalData.title}</h3>
-            <div className="modal-rule"></div>
-            <p className="modal-desc">{modalData.desc}</p>
-
-            <div style={{ marginBottom: '24px' }}>
-              <h4 className="modal-section-title">
-                <Check size={16} aria-hidden="true" />
-                Insight Utama &amp; Implementasi
-              </h4>
-              <ul className="modal-highlights">
-                {modalData.highlights.map((h, i) => <li key={i}>{h}</li>)}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="modal-section-title">
-                <Layers size={16} aria-hidden="true" />
-                Tools &amp; Framework
-              </h4>
-              <div className="modal-tech-grid">
-                {modalData.techStack.map((t, i) => (
-                  <span className="modal-tech-chip" key={i}>{t}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ===== TOAST ===== */}
       {toastMessage && (
