@@ -776,6 +776,174 @@ body.anim-done .hero-cta-group {
   height: 100%;
 }
 
+/* ==========================================================
+   HP (<768px): FOTO KECIL DI KANAN ATAS, SEJAJAR NAMA
+   Baris atas hero = grid 2 kolom: [nama | foto].
+   Tagline/deskripsi/CTA full-width di bawahnya (alur normal).
+   SATU wrapper (.hero-photo-frame, position: relative) membungkus
+   bundaran (absolute, di belakang) + foto (relative) -> keduanya
+   tidak bisa terpisah lagi. Semua posisi/transform warisan
+   desktop di-reset di dalam blok ini. Desktop (>=768px) TIDAK
+   terpengaruh sama sekali.
+   ========================================================== */
+@media (max-width: 767px) {
+  /* --- Baris atas: nama kiri, foto kanan; konten lain di bawah --- */
+  .hero-inner {
+    grid-template-columns: 1fr auto;   /* kolom kiri fleksibel, kanan seukuran foto */
+    align-items: start;
+    column-gap: 12px;                  /* jarak minimal huruf "O" -> foto */
+  }
+
+  /* .hero-text tetap membungkus nama + meta, tetapi anak-anaknya
+     ikut grid .hero-inner: nama -> kolom kiri, meta -> full width */
+  .hero-text {
+    display: contents;
+  }
+
+  .hero-name {
+    grid-column: 1;                    /* kolom kiri baris 1 */
+    grid-row: 1;
+    min-width: 0;
+    align-self: start;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 3;                        /* nama selalu di atas foto/bundaran */
+  }
+
+  /* Nama dikecilkan agar tidak pernah menabrak foto */
+  .hero-name-line {
+    font-size: clamp(3rem, 15vw, 5rem);
+    z-index: 3;
+  }
+
+  /* Tagline, deskripsi, tombol, sosial: full width di bawah baris nama */
+  .hero-meta {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    position: relative;
+    z-index: 3;                        /* di atas elemen foto */
+    padding-top: 14px;
+  }
+
+  /* --- Panggung foto: lepas dari positioning absolute desktop --- */
+  .hero-photo-stage {
+    position: static;                  /* ikut alur grid (kolom kanan baris 1) */
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+    height: auto;
+    margin-top: 4px;                   /* puncak bundaran ~sejajar/sedikit di bawah puncak huruf */
+    justify-self: end;
+    z-index: 1;
+  }
+
+  /* Wrapper foto: SATU acuan posisi untuk bundaran + foto.
+     Lebar ~38-42% layar (150-170px di 390px), tinggi mengikuti rasio foto,
+     dasar terpotong rata (overflow: hidden) -> potret setengah badan. */
+  .hero-photo-frame {
+    position: relative;
+    inset: auto;                       /* reset top/right/bottom desktop */
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    width: clamp(150px, 41vw, 170px);
+    max-width: 100%;
+    overflow: hidden;
+    transform: none;
+  }
+
+  /* Bundaran hijau: absolute DI DALAM wrapper, di belakang kepala.
+     Diameter ~85% lebar wrapper; translateY(-100%) mengangkatnya keluar
+     area potong sehingga bahu menimpa bagian bawah bundaran & dasar
+     foto tetap terpotong rata. Transform parallax/kursor ikut ter-reset. */
+  .hero-photo-circle {
+    position: absolute;
+    top: 24%;                          /* kepala sedikit keluar dari atas bundaran */
+    left: 50%;
+    width: 85%;
+    height: auto;
+    transform: translateX(-50%) translateY(-100%);
+    z-index: 1;                        /* di bawah foto */
+    border-radius: 50%;
+  }
+
+  /* Foto: relative (bukan absolute), lebar penuh wrapper, tinggi auto,
+     dinaikkan 24% agar bahu menimpa dasar bundaran */
+  .hero-photo-wrap {
+    position: relative;
+    inset: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    display: block;
+    margin: 0;
+    margin-top: -24%;
+    z-index: 2;                        /* di atas bundaran */
+    transform: none;                   /* parallax desktop dimatikan */
+  }
+
+  .hero-photo-img {
+    width: 100%;
+    height: auto;                      /* tinggi mengikuti rasio foto */
+    max-width: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* --- Animasi masuk (fade + scale) ditaruh di STAGE, elemen terpisah
+         dari elemen yang mengatur layout -> transform tidak merusak posisi --- */
+  .js-anim .hero-photo-stage {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  body.is-loaded .hero-photo-stage {
+    opacity: 1;
+    transform: none;
+    transition: opacity 700ms var(--ease-out-expo),
+                transform 700ms var(--ease-out-expo);
+    transition-delay: 220ms;
+  }
+  /* Elemen dalam (bundaran/foto) TIDAK dianimasikan terpisah di HP:
+     state awal & akhir dipaksa netral agar tidak ada transform menumpuk */
+  .js-anim .hero-photo-circle,
+  body.is-loaded .hero-photo-circle,
+  .js-anim .hero-photo-wrap,
+  body.is-loaded .hero-photo-wrap {
+    opacity: 1;
+    transition: none;
+  }
+  .js-anim .hero-photo-circle,
+  body.is-loaded .hero-photo-circle {
+    transform: translateX(-50%) translateY(-100%);
+  }
+  .js-anim .hero-photo-wrap,
+  body.is-loaded .hero-photo-wrap {
+    transform: none;
+  }
+
+  /* --- Tagline typing: tinggi terkunci (boleh 2 baris), di atas elemen lain --- */
+  .hero-role {
+    position: relative;
+    z-index: 4;
+    max-width: 100%;
+  }
+  .hero-role-size,
+  .hero-role-live {
+    white-space: normal;               /* boleh wrap 2 baris di HP */
+    overflow-wrap: anywhere;
+  }
+
+  /* --- Tombol & ikon sosial: full width, tap target nyaman --- */
+  .btn-primary {
+    width: 100%;
+    max-width: none;
+  }
+  .hero-socials {
+    justify-content: flex-start;
+  }
+}
+
 /* 640px ke atas */
 @media (min-width: 640px) {
   .hero-inner { padding: 0 32px 0; }
