@@ -790,8 +790,9 @@ body.anim-done .hero-cta-group {
   /* --- Baris atas: nama kiri, foto kanan; konten lain di bawah --- */
   .hero-inner {
     grid-template-columns: 1fr auto;   /* kolom kiri fleksibel, kanan seukuran foto */
-    align-items: start;
+    align-items: end;                  /* dasar nama sejajar dasar foto */
     column-gap: 12px;                  /* jarak minimal huruf "O" -> foto */
+    row-gap: 28px;                     /* dasar foto -> tagline */
   }
 
   /* .hero-text tetap membungkus nama + meta, tetapi anak-anaknya
@@ -804,7 +805,7 @@ body.anim-done .hero-cta-group {
     grid-column: 1;                    /* kolom kiri baris 1 */
     grid-row: 1;
     min-width: 0;
-    align-self: start;
+    align-self: end;                   /* sejajar dasar foto */
     margin-bottom: 0;
     position: relative;
     z-index: 3;                        /* nama selalu di atas foto/bundaran */
@@ -822,7 +823,7 @@ body.anim-done .hero-cta-group {
     grid-row: 2;
     position: relative;
     z-index: 3;                        /* di atas elemen foto */
-    padding-top: 14px;
+    padding-top: 0;                    /* jarak ke foto diatur row-gap 28px */
   }
 
   /* --- Panggung foto: lepas dari positioning absolute desktop --- */
@@ -832,14 +833,16 @@ body.anim-done .hero-cta-group {
     grid-row: 1;
     width: auto;
     height: auto;
-    margin-top: 4px;                   /* puncak bundaran ~sejajar/sedikit di bawah puncak huruf */
+    margin-top: 14px;                  /* padding atas baris: rambut tak menyentuh navbar */
     justify-self: end;
     z-index: 1;
   }
 
   /* Wrapper foto: SATU acuan posisi untuk bundaran + foto.
-     Lebar ~38-42% layar (150-170px di 390px), tinggi mengikuti rasio foto,
-     dasar terpotong rata (overflow: hidden) -> potret setengah badan. */
+     Lebar ~42-45% layar (165-175px di 390px), tinggi via aspect-ratio.
+     TANPA overflow: hidden -> bundaran tampil BULAT PENUH.
+     clip-path hanya memotong sisi BAWAH (dasar foto rata), sisi atas &
+     samping dibiarkan terbuka agar bundaran & kepala tidak terpotong. */
   .hero-photo-frame {
     position: relative;
     inset: auto;                       /* reset top/right/bottom desktop */
@@ -847,45 +850,47 @@ body.anim-done .hero-cta-group {
     right: auto;
     bottom: auto;
     left: auto;
-    width: clamp(150px, 41vw, 170px);
+    width: clamp(165px, 44vw, 175px);
     max-width: 100%;
-    overflow: hidden;
+    aspect-ratio: 1 / 1.1;
+    clip-path: inset(-30% -30% 0 -30%);/* potong bawah saja */
     transform: none;
   }
 
   /* Bundaran hijau: absolute DI DALAM wrapper, di belakang kepala.
-     Diameter ~85% lebar wrapper; translateY(-100%) mengangkatnya keluar
-     area potong sehingga bahu menimpa bagian bawah bundaran & dasar
-     foto tetap terpotong rata. Transform parallax/kursor ikut ter-reset. */
+     Diameter 85% lebar wrapper, seluruhnya di dalam frame -> bulat penuh.
+     transform translateX(-50%) juga menimpa transform parallax desktop. */
   .hero-photo-circle {
     position: absolute;
-    top: 24%;                          /* kepala sedikit keluar dari atas bundaran */
+    top: 8%;
     left: 50%;
     width: 85%;
     height: auto;
-    transform: translateX(-50%) translateY(-100%);
+    aspect-ratio: 1 / 1;
+    transform: translateX(-50%);
     z-index: 1;                        /* di bawah foto */
     border-radius: 50%;
   }
 
-  /* Foto: relative (bukan absolute), lebar penuh wrapper, tinggi auto,
-     dinaikkan 24% agar bahu menimpa dasar bundaran */
+  /* Foto: jangkar di dasar wrapper. Kepala keluar ~10% diameter bundaran
+     di atas lingkaran; seluruh wajah tetap di dalam bundaran;
+     bahu menimpa bagian bawah bundaran. */
   .hero-photo-wrap {
-    position: relative;
+    position: absolute;
     inset: auto;
-    left: auto;
+    left: 50%;
     right: auto;
-    bottom: auto;
+    bottom: 0;
+    top: auto;
     display: block;
     margin: 0;
-    margin-top: -24%;
     z-index: 2;                        /* di atas bundaran */
-    transform: none;                   /* parallax desktop dimatikan */
+    transform: translateX(-50%);       /* parallax desktop dimatikan */
   }
 
   .hero-photo-img {
     width: 100%;
-    height: auto;                      /* tinggi mengikuti rasio foto */
+    height: auto;                      /* rasio asli 760x868 (~1/1.142) */
     max-width: 100%;
     object-fit: cover;
     object-position: top center;
@@ -915,11 +920,11 @@ body.anim-done .hero-cta-group {
   }
   .js-anim .hero-photo-circle,
   body.is-loaded .hero-photo-circle {
-    transform: translateX(-50%) translateY(-100%);
+    transform: translateX(-50%);
   }
   .js-anim .hero-photo-wrap,
   body.is-loaded .hero-photo-wrap {
-    transform: none;
+    transform: translateX(-50%);
   }
 
   /* --- Tagline typing: tinggi terkunci (boleh 2 baris), di atas elemen lain --- */
