@@ -787,12 +787,42 @@ body.anim-done .hero-cta-group {
    terpengaruh sama sekali.
    ========================================================== */
 @media (max-width: 767px) {
+  /* --- Hamburger di pojok KANAN navbar (HP) --- */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+  }
+  .nav-actions {
+    margin-left: auto;        /* dorong grup kanan (hamburger) ke pojok kanan */
+  }
+  /* Penyebab hamburger menempel ke logo: menu desktop disembunyikan tapi
+     UL kosongnya masih memakai ruang grid -> display none */
+  .nav-links {
+    display: none;
+  }
+  .nav-toggle {
+    display: inline-flex;
+    width: 44px;   /* tap target >= 44px */
+    height: 44px;
+  }
+
+  /* --- Hilangkan ruang kosong ~130px di atas nama (HP) --- */
+  .hero-section {
+    min-height: auto;          /* jangan setinggi layar penuh */
+    padding-top: 20px;         /* jarak navbar -> bundaran/nama (16-24px) */
+    padding-bottom: 32px;      /* napas bawah sebelum section berikut */
+  }
+
   /* --- Baris atas: nama kiri, foto kanan; konten lain di bawah --- */
   .hero-inner {
+    flex: none;                /* konten mulai dari atas, tidak meregang */
     grid-template-columns: 1fr auto;   /* kolom kiri fleksibel, kanan seukuran foto */
     align-items: end;                  /* dasar nama sejajar dasar foto */
     column-gap: 12px;                  /* jarak minimal huruf "O" -> foto */
-    row-gap: 28px;                     /* dasar foto -> tagline */
+    row-gap: 24px;                     /* dasar foto -> tagline (~24px) */
   }
 
   /* .hero-text tetap membungkus nama + meta, tetapi anak-anaknya
@@ -823,7 +853,7 @@ body.anim-done .hero-cta-group {
     grid-row: 2;
     position: relative;
     z-index: 3;                        /* di atas elemen foto */
-    padding-top: 0;                    /* jarak ke foto diatur row-gap 28px */
+    padding-top: 0;                    /* jarak ke foto diatur row-gap 24px */
   }
 
   /* --- Panggung foto: lepas dari positioning absolute desktop --- */
@@ -833,7 +863,7 @@ body.anim-done .hero-cta-group {
     grid-row: 1;
     width: auto;
     height: auto;
-    margin-top: 14px;                  /* padding atas baris: rambut tak menyentuh navbar */
+    margin-top: 4px;                   /* puncak bundaran ~sejajar puncak huruf */
     justify-self: end;
     z-index: 1;
   }
@@ -858,13 +888,13 @@ body.anim-done .hero-cta-group {
   }
 
   /* Bundaran hijau: absolute DI DALAM wrapper, di belakang kepala.
-     Diameter 85% lebar wrapper, seluruhnya di dalam frame -> bulat penuh.
+     Diameter 88% lebar wrapper, seluruhnya di dalam frame -> bulat penuh.
      transform translateX(-50%) juga menimpa transform parallax desktop. */
   .hero-photo-circle {
     position: absolute;
     top: 8%;
     left: 50%;
-    width: 85%;
+    width: 88%;
     height: auto;
     aspect-ratio: 1 / 1;
     transform: translateX(-50%);
@@ -872,8 +902,9 @@ body.anim-done .hero-cta-group {
     border-radius: 50%;
   }
 
-  /* Foto: jangkar di dasar wrapper. Kepala keluar ~10% diameter bundaran
-     di atas lingkaran; seluruh wajah tetap di dalam bundaran;
+  /* Foto: jangkar di dasar wrapper. Lebar 105% wrapper (~119% diameter
+     bundaran) sehingga bundaran terisi penuh. Kepala keluar ~8-10%
+     diameter di atas lingkaran; wajah di tengah atas bundaran;
      bahu menimpa bagian bawah bundaran. */
   .hero-photo-wrap {
     position: absolute;
@@ -884,6 +915,7 @@ body.anim-done .hero-cta-group {
     top: auto;
     display: block;
     margin: 0;
+    width: 105%;
     z-index: 2;                        /* di atas bundaran */
     transform: translateX(-50%);       /* parallax desktop dimatikan */
   }
@@ -891,7 +923,7 @@ body.anim-done .hero-cta-group {
   .hero-photo-img {
     width: 100%;
     height: auto;                      /* rasio asli 760x868 (~1/1.142) */
-    max-width: 100%;
+    max-width: none;
     object-fit: cover;
     object-position: top center;
   }
