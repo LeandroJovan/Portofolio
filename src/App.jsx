@@ -37,6 +37,17 @@ const InstagramIcon = ({ size = 18 }) => (
   </svg>
 );
 
+/* ===== SATU SUMBER KEBENARAN UNTUK FILE CV =====
+ * File CV disimpan di public/ dengan nama berversi (tahun/tanggal).
+ * Cara update CV: letakkan PDF baru di public/ dengan nama versi baru
+ * (mis. CV_Leandro_Jovan_2026-06.pdf), lalu ubah CV_FILENAME di sini.
+ * Opsi: bisa juga timpa file dengan nama sama dan cukup ubah CV_VERSION
+ * agar URL ?v= berubah -> browser/CDN dipaksa mengambil file baru. */
+const CV_VERSION = '2026';
+const CV_FILENAME = `CV_Leandro_Jovan_${CV_VERSION}.pdf`;
+const CV_URL = `/${CV_FILENAME}?v=${CV_VERSION}`;
+const CV_DOWNLOAD_NAME = 'CV_Leandro_Jovan.pdf';
+
 const GithubIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
@@ -481,8 +492,8 @@ export default function App() {
             {/* Kanan: tombol Unduh CV + hamburger (mobile) */}
             <div className="nav-actions">
               <a
-                href="/CV ATS.pdf"
-                download="CV_Leandro_Jovan_Falviano.pdf"
+                href={CV_URL}
+                download={CV_DOWNLOAD_NAME}
                 className="btn-nav-cv"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -520,8 +531,8 @@ export default function App() {
             {/* Tombol Unduh CV masuk ke panel agar tap target besar di HP */}
             <li role="none" className="mobile-nav-cv">
               <a
-                href="/CV ATS.pdf"
-                download="CV_Leandro_Jovan_Falviano.pdf"
+                href={CV_URL}
+                download={CV_DOWNLOAD_NAME}
                 className="mobile-nav-link mobile-nav-cv-link"
                 role="menuitem"
                 target="_blank"
@@ -571,8 +582,8 @@ export default function App() {
               <div className="hero-accent-line" aria-hidden="true"></div>
               <div className="hero-cta-group">
                 <a
-                  href="/CV ATS.pdf"
-                  download="CV_Leandro_Jovan_Falviano.pdf"
+                  href={CV_URL}
+                  download={CV_DOWNLOAD_NAME}
                   className="btn-primary"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -649,8 +660,8 @@ export default function App() {
               </div>
               <div className="io-reveal" style={{ '--d': '170ms' }}>
                 <a
-                  href="/CV ATS.pdf"
-                  download="CV_Leandro_Jovan_Falviano.pdf"
+                  href={CV_URL}
+                  download={CV_DOWNLOAD_NAME}
                   className="btn-outline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -938,8 +949,8 @@ export default function App() {
             {/* Right: CTA box */}
             <div className="contact-col io-reveal" style={{ '--d': '120ms' }}>
               <a
-                href="/CV ATS.pdf"
-                download="CV_Leandro_Jovan_Falviano.pdf"
+                href={CV_URL}
+                download={CV_DOWNLOAD_NAME}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-cta-box"
