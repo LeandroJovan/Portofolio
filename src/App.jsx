@@ -43,7 +43,7 @@ const InstagramIcon = ({ size = 18 }) => (
  * (mis. CV_Leandro_Jovan_2026-06.pdf), lalu ubah CV_FILENAME di sini.
  * Opsi: bisa juga timpa file dengan nama sama dan cukup ubah CV_VERSION
  * agar URL ?v= berubah -> browser/CDN dipaksa mengambil file baru. */
-const CV_VERSION = '2026';
+const CV_VERSION = '2026-10-08';
 const CV_FILENAME = `CV_Leandro_Jovan_${CV_VERSION}.pdf`;
 const CV_URL = `/${CV_FILENAME}?v=${CV_VERSION}`;
 const CV_DOWNLOAD_NAME = 'CV_Leandro_Jovan.pdf';
