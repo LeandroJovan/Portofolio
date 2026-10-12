@@ -19,6 +19,7 @@ import {
   BookOpen,
   Menu
 } from 'lucide-react';
+import { CV_URL, CV_DOWNLOAD_NAME } from './config';
 
 /* ===== INLINE SVG ICONS ===== */
 const LinkedinIcon = ({ size = 18 }) => (
@@ -36,17 +37,6 @@ const InstagramIcon = ({ size = 18 }) => (
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
   </svg>
 );
-
-/* ===== SATU SUMBER KEBENARAN UNTUK FILE CV =====
- * File CV disimpan di public/ dengan nama berversi (tahun/tanggal).
- * Cara update CV: letakkan PDF baru di public/ dengan nama versi baru
- * (mis. CV_Leandro_Jovan_2026-06.pdf), lalu ubah CV_FILENAME di sini.
- * Opsi: bisa juga timpa file dengan nama sama dan cukup ubah CV_VERSION
- * agar URL ?v= berubah -> browser/CDN dipaksa mengambil file baru. */
-const CV_VERSION = '2026-10-08';
-const CV_FILENAME = `CV_Leandro_Jovan_${CV_VERSION}.pdf`;
-const CV_URL = `/${CV_FILENAME}?v=${CV_VERSION}`;
-const CV_DOWNLOAD_NAME = 'CV_Leandro_Jovan.pdf';
 
 const GithubIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
