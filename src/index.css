@@ -2096,6 +2096,46 @@ section {
   .carousel-arrow:hover { transform: none; box-shadow: none; }
 }
 
+/* --- Desktop (>=768px): pratinjau mengisi penuh tinggi kolom kiri kartu --- */
+/* HANYA override desktop; aturan mobile (<768px) tidak disentuh. */
+@media (min-width: 768px) {
+  .project-card {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); /* kolom terkunci, tidak melebar */
+    align-items: stretch;
+  }
+
+  .project-media {
+    align-self: stretch;
+    position: static;        /* hapus sticky jika ada */
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 320px;
+    aspect-ratio: auto;      /* isi tinggi kolom, bukan patokan rasio */
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+  }
+
+  .project-media-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+    padding: 24px;
+  }
+
+  /* Teks kecil wrap rapi di dalam blok */
+  .project-media-placeholder-sub {
+    max-width: 90%;
+    white-space: normal;
+  }
+}
+
 /* ===== CONTACT SECTION ===== */
 .contact-section {
   background: var(--bg-section);
