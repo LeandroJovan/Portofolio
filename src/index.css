@@ -1885,6 +1885,217 @@ section {
   outline-offset: 2px;
 }
 
+/* ===== PROJECTS CAROUSEL ===== */
+/* Variabel durasi transisi geser — samakan dengan TRANSITION_MS di App.jsx */
+.projects-carousel {
+  --slide-trans-ms: 650ms;
+  position: relative;
+  touch-action: pan-y;            /* swipe horizontal aktif, scroll vertikal aman */
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+/* Track horizontal: tiap slide 100% lebar; geser via transform translateX */
+.carousel-track {
+  display: flex;
+  align-items: stretch;           /* tinggi semua slide sama -> tidak melompat */
+  transition: transform var(--slide-trans-ms) cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;                   /* cegah slide melebar karena isi */
+}
+
+/* Kartu di dalam slide mengisi tinggi slide (track stretch) */
+.carousel-slide .project-card {
+  height: 100%;
+}
+
+/* Slide yang tidak aktif sedikit memudar */
+.carousel-slide .project-card {
+  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity var(--slide-trans-ms) cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.4;
+}
+.carousel-slide.is-active .project-card {
+  opacity: 1;
+}
+
+/* --- Animasi masuk saat slide menjadi aktif (hanya transform & opacity) --- */
+/* Pratinjau: fade + scale 0.97 -> 1 */
+.carousel-slide .project-media {
+  opacity: 0;
+  transform: scale(0.97);
+}
+.carousel-slide.is-active .project-media {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Isi teks: fade-up bertahap, stagger 80ms via --si */
+.carousel-slide .slide-stagger {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.carousel-slide.is-active .slide-stagger {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(120ms + var(--si, 0) * 80ms);
+}
+
+/* --- Tombol panah: pojok kanan atas, gaya outline tipis spt ikon sosial --- */
+.carousel-arrows {
+  position: absolute;
+  top: -58px;                     /* sejajar area header section */
+  right: 0;
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+.carousel-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: border-color 0.35s var(--ease-out-expo),
+              color 0.35s var(--ease-out-expo),
+              background-color 0.35s var(--ease-out-expo),
+              transform 0.35s var(--ease-out-expo),
+              box-shadow 0.35s var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .carousel-arrow:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -6px rgba(26, 107, 74, 0.28);
+  }
+}
+.carousel-arrow:active { transform: scale(0.95); }
+
+/* --- Kontrol bawah: dots + nomor + garis progress --- */
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 10px;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  padding: 0;
+  transition: background-color 0.3s var(--ease-out-expo),
+              border-color 0.3s var(--ease-out-expo),
+              transform 0.3s var(--ease-out-expo);
+  /* Perbesar area klik tanpa mengubah ukuran visual */
+  position: relative;
+}
+.carousel-dot::after {
+  content: '';
+  position: absolute;
+  inset: -8px;                    /* tap target +-26px, tombol panah tetap 44px */
+}
+.carousel-dot.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.15);
+}
+@media (hover: hover) {
+  .carousel-dot:hover { border-color: var(--accent); }
+}
+
+.carousel-count {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* Garis progress auto-play: scaleX 0 -> 1 selama AUTOPLAY_MS (diisi inline) */
+.carousel-progress {
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.carousel-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: carousel-progress var(--autoplay-ms, 6000ms) linear forwards;
+}
+.carousel-progress.is-paused::before {
+  animation: none;
+  transform: scaleX(0);
+}
+@keyframes carousel-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* --- Mobile: panah pindah ke bawah bersama dots --- */
+@media (max-width: 768px) {
+  .carousel-arrows {
+    position: static;
+    order: 3;
+    margin-left: auto;
+  }
+  .carousel-controls {
+    flex-wrap: wrap;
+  }
+}
+
+/* --- Reduced motion: tanpa geser & auto-play; pakai fade singkat --- */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track { transition: none; }
+  .carousel-slide .project-card { transition: opacity 180ms ease; }
+  .carousel-slide .project-media,
+  .carousel-slide.is-active .project-media,
+  .carousel-slide .slide-stagger,
+  .carousel-slide.is-active .slide-stagger {
+    opacity: 1;
+    transform: none;
+    transition: opacity 180ms ease;
+    transition-delay: 0ms;
+  }
+  .carousel-progress::before { animation: none; }
+  .carousel-arrow:hover { transform: none; box-shadow: none; }
+}
+
 /* ===== CONTACT SECTION ===== */
 .contact-section {
   background: var(--bg-section);

@@ -17,7 +17,10 @@ import {
   Circle,
   Database,
   BookOpen,
-  Menu
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  BarChart2
 } from 'lucide-react';
 import { CV_URL, CV_DOWNLOAD_NAME } from './config';
 
@@ -72,8 +75,34 @@ const projectsList = [
     // Ganti null di bawah dengan '/assets/pangantrack.webp' setelah screenshot dashboard tersedia
     image: null,
     imageAlt: 'Tampilan dashboard PanganTrack'
+  },
+  {
+    id: 'skola',
+    num: '02',
+    title: 'Skola',
+    subtitle: 'Sistem Kelayakan Pendidikan Indonesia',
+    desc: 'Dashboard interaktif untuk memetakan kelayakan pendidikan di 38 provinsi Indonesia. Pengguna dapat memfilter provinsi berdasarkan status (Kritis, Sedang, Baik), mengurutkan berdasarkan skor, angka putus sekolah, atau kelas rusak, lalu melihat detail analisis, skor prioritas intervensi, dan profil 5 dimensi dalam bentuk radar chart.',
+    role: 'Data Analysis & Web Dashboard',
+    techStack: ['Python', 'Pandas', 'Jupyter Notebook', 'HTML/CSS/JS', 'Netlify'],
+    highlights: [
+      'Pemetaan 38 provinsi dengan status Kritis / Sedang / Baik.',
+      'Skor prioritas intervensi untuk membantu menentukan daerah yang perlu didahulukan.',
+      'Profil 5 dimensi per provinsi dalam radar chart.'
+    ],
+    liveUrl: 'https://skola-3324600022.netlify.app/',
+    codeUrl: 'https://github.com/LeandroJovan/skola',
+    categories: ['Data Analytics', 'Dashboard', 'Pendidikan'],
+    // Ganti null di bawah dengan '/assets/skola.webp' setelah screenshot dashboard tersedia
+    image: null,
+    imageAlt: 'Tampilan dashboard Skola'
   }
 ];
+
+/* ===== PENGATURAN CAROUSEL PROYEK ===== */
+const AUTOPLAY_MS = 6000;      // jeda auto-play antar slide (ms)
+const RESUME_DELAY_MS = 8000;  // jeda setelah interaksi sebelum auto-play lanjut
+const TRANSITION_MS = 650;     // durasi transisi geser (harus cocok dgn CSS)
+const SWIPE_THRESHOLD = 50;    // jarak minimal swipe (px)
 
 /* Frasa bergantian untuk efek typing di hero (frasa pertama = utama) */
 const HERO_TYPING_PHRASES = [
@@ -89,6 +118,278 @@ const skills = [
   { name: 'Machine Learning', pct: 80, icon: <BrainCircuit size={14} /> },
   { name: 'Research & Writing', pct: 82, icon: <BookOpen size={14} /> },
 ];
+
+/* ===== CAROUSEL PROYEK =====
+   - Geser pakai transform: translateX() pada track (paling stabil lintas browser).
+   - Auto-play AUTOPLAY_MS; jeda saat hover / fokus / tab tidak aktif /
+     baru interaksi (lanjut lagi setelah RESUME_DELAY_MS).
+   - prefers-reduced-motion: auto-play mati, geser diganti fade singkat (via CSS).
+   - Konten slide pertama dirender normal (React SSR/DOM) -> tetap tampil
+     walau JS interaksi gagal; tanpa JS tombol navigasi memang tidak jalan,
+     tetapi slide 1 tidak pernah disembunyikan oleh JS. */
+function ProjectsCarousel({ projects }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);       // hover / fokus keyboard
+  const [progressKey, setProgressKey] = useState(0); // me-restart animasi garis progress
+  const total = projects.length;
+  const reducedMotion = useRef(
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ).current;
+
+  const regionRef = useRef(null);
+  const interactTimer = useRef(0);
+  const pointerStart = useRef(null);
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const goTo = (i) => setIndex((i + total) % total);
+  const next = () => goTo(index + 1);
+  const prev = () => goTo(index - 1);
+
+  // Tandai interaksi pengguna: auto-play ditahan RESUME_DELAY_MS lalu lanjut
+  const noteInteraction = () => {
+    setPaused(true);
+    window.clearTimeout(interactTimer.current);
+    interactTimer.current = window.setTimeout(() => setPaused(false), RESUME_DELAY_MS);
+  };
+
+  /* Auto-play + jeda saat tab tidak aktif. Progress bar (CSS animation)
+     di-restart lewat progressKey setiap slide berganti atau jeda berakhir. */
+  useEffect(() => {
+    if (reducedMotion || paused || total < 2) return;
+
+    let interval = 0;
+    const start = () => {
+      window.clearInterval(interval);
+      setProgressKey((k) => k + 1);
+      interval = window.setInterval(() => {
+        setIndex((i) => (i + 1) % total);
+      }, AUTOPLAY_MS);
+    };
+
+    if (document.visibilityState === 'visible') start();
+    const onVis = () => {
+      if (document.visibilityState === 'visible') start();
+      else window.clearInterval(interval);
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVis);
+    };
+  }, [index, paused, reducedMotion, total]);
+
+  // Bersihkan timer interaksi saat unmount
+  useEffect(() => () => window.clearTimeout(interactTimer.current), []);
+
+  // Keyboard: panah kiri/kanan saat fokus di dalam carousel
+  const onKeyDown = (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); next(); noteInteraction(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); noteInteraction(); }
+  };
+
+  // Swipe (Pointer Events): threshold SWIPE_THRESHOLD px; touch-action: pan-y
+  // di CSS menjaga scroll vertikal tetap mulus.
+  const onPointerDown = (e) => {
+    pointerStart.current = { x: e.clientX, y: e.clientY };
+  };
+  const onPointerUp = (e) => {
+    if (!pointerStart.current) return;
+    const dx = e.clientX - pointerStart.current.x;
+    const dy = e.clientY - pointerStart.current.y;
+    pointerStart.current = null;
+    // Hanya swipe yang dominan horizontal
+    if (Math.abs(dx) >= SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) next(); else prev();
+      noteInteraction();
+    }
+  };
+
+  return (
+    <div
+      className="projects-carousel io-reveal"
+      style={{ '--d': '120ms' }}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Proyek pilihan"
+      ref={regionRef}
+      onKeyDown={onKeyDown}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+    >
+      {/* Panah atas-kanan viewport (desktop) */}
+      {total > 1 && (
+        <div className="carousel-arrows">
+          <button
+            type="button"
+            className="carousel-arrow"
+            aria-label="Slide sebelumnya"
+            onClick={() => { prev(); noteInteraction(); }}
+          >
+            <ChevronLeft size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="carousel-arrow"
+            aria-label="Slide berikutnya"
+            onClick={() => { next(); noteInteraction(); }}
+          >
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
+      <div className="carousel-viewport">
+        <div
+          className="carousel-track"
+          style={{ transform: `translateX(-${index * 100}%)` }}
+        >
+          {projects.map((p, i) => {
+            const isActive = i === index;
+            return (
+              <div
+                className={`carousel-slide ${isActive ? 'is-active' : ''}`}
+                key={p.id}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} dari ${total}`}
+                aria-hidden={isActive ? undefined : true}
+                // inert modern; fallback tabIndex -1 pada tautan slide nonaktif
+                {...(isActive ? {} : { inert: '' })}
+              >
+                <a
+                  className="project-card"
+                  href={p.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Buka ${p.title} (live demo)`}
+                  tabIndex={isActive ? undefined : -1}
+                >
+                  {/* Kiri: pratinjau */}
+                  <div className="project-media">
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={p.imageAlt}
+                        loading="lazy"
+                        decoding="async"
+                        width="1600"
+                        height="1000"
+                      />
+                    ) : (
+                      /* Placeholder — ganti image di data dengan '/assets/....webp' */
+                      <div className="project-media-placeholder" role="img" aria-label={p.imageAlt}>
+                        {p.id === 'skola' ? (
+                          <BarChart2 size={44} strokeWidth={1.25} aria-hidden="true" />
+                        ) : (
+                          <LineChart size={44} strokeWidth={1.25} aria-hidden="true" />
+                        )}
+                        <span className="project-media-placeholder-title">{p.title}</span>
+                        <span className="project-media-placeholder-sub">{p.subtitle}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Kanan: detail */}
+                  <div className="project-body">
+                    <div className="project-body-top slide-stagger" style={{ '--si': 0 }}>
+                      <span className="project-num" aria-hidden="true">{p.num}</span>
+                      <div className="project-categories">
+                        {p.categories.map((c, k) => (
+                          <span className="project-category" key={k}>{c}</span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <h3 className="project-card-title slide-stagger" style={{ '--si': 1 }}>{p.title}</h3>
+                    <p className="project-subtitle slide-stagger" style={{ '--si': 2 }}>{p.subtitle}</p>
+                    <p className="project-card-desc slide-stagger" style={{ '--si': 3 }}>{p.desc}</p>
+
+                    <div className="project-role slide-stagger" style={{ '--si': 4 }}>
+                      <span className="project-role-label">Peran saya</span>
+                      <span className="project-role-value">{p.role}</span>
+                    </div>
+
+                    <div className="project-chips slide-stagger" style={{ '--si': 5 }}>
+                      {p.techStack.map((t, k) => (
+                        <span className="project-chip" key={k}>{t}</span>
+                      ))}
+                    </div>
+
+                    <ul className="project-highlights slide-stagger" style={{ '--si': 6 }}>
+                      {p.highlights.map((h, k) => (
+                        <li key={k}>
+                          <span className="project-hl-num" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="project-actions slide-stagger" style={{ '--si': 7 }}>
+                      <span className="project-cta-live">
+                        Lihat Live Demo
+                        <ExternalLink size={14} aria-hidden="true" />
+                      </span>
+                      <a
+                        className="project-cta-code"
+                        href={p.codeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Buka kode sumber ${p.title} di GitHub`}
+                        tabIndex={isActive ? undefined : -1}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GithubIcon size={14} />
+                        Kode
+                      </a>
+                    </div>
+                  </div>
+
+                  <span className="project-card-line" aria-hidden="true"></span>
+                  <span className="project-corner" aria-hidden="true">
+                    <ArrowUpRight size={18} />
+                  </span>
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Kontrol bawah: dots + penomoran + garis progress auto-play */}
+      {total > 1 && (
+        <div className="carousel-controls">
+          <div className="carousel-dots" role="tablist" aria-label="Pilih slide proyek">
+            {projects.map((p, i) => (
+              <button
+                key={p.id}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`Slide ${i + 1}: ${p.title}`}
+                className={`carousel-dot ${i === index ? 'is-active' : ''}`}
+                onClick={() => { goTo(i); noteInteraction(); }}
+              />
+            ))}
+          </div>
+          <span className="carousel-count" aria-hidden="true">
+            {pad(index + 1)} / {pad(total)}
+          </span>
+          <span
+            key={progressKey}
+            className={`carousel-progress ${reducedMotion || paused ? 'is-paused' : ''}`}
+            style={{ '--autoplay-ms': `${AUTOPLAY_MS}ms` }}
+            aria-hidden="true"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* ===== COMPONENT ===== */
 export default function App() {
@@ -782,102 +1083,8 @@ export default function App() {
             </p>
           </div>
 
-          {/* Grid kartu — tambah objek di projectsList untuk menampilkan kartu berikutnya */}
-          <div className="projects-grid">
-            {projectsList.map((p, i) => (
-              <a
-                className="project-card io-reveal"
-                style={{ '--d': `${120 + i * 80}ms` }}
-                key={p.id}
-                href={p.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Buka ${p.title} (live demo)`}
-              >
-                {/* Kiri: pratinjau */}
-                <div className="project-media">
-                  {p.image ? (
-                    <img
-                      src={p.image}
-                      alt={p.imageAlt}
-                      loading="lazy"
-                      decoding="async"
-                      width="1600"
-                      height="1000"
-                    />
-                  ) : (
-                    /* Placeholder — ganti image di data dengan '/assets/pangantrack.webp' */
-                    <div className="project-media-placeholder" role="img" aria-label={p.imageAlt}>
-                      <LineChart size={44} strokeWidth={1.25} aria-hidden="true" />
-                      <span className="project-media-placeholder-title">{p.title}</span>
-                      <span className="project-media-placeholder-sub">{p.subtitle}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Kanan: detail */}
-                <div className="project-body">
-                  <div className="project-body-top">
-                    <span className="project-num" aria-hidden="true">{p.num}</span>
-                    <div className="project-categories">
-                      {p.categories.map((c, k) => (
-                        <span className="project-category" key={k}>{c}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <h3 className="project-card-title">{p.title}</h3>
-                  <p className="project-subtitle">{p.subtitle}</p>
-                  <p className="project-card-desc">{p.desc}</p>
-
-                  <div className="project-role">
-                    <span className="project-role-label">Peran saya</span>
-                    <span className="project-role-value">{p.role}</span>
-                  </div>
-
-                  <div className="project-chips">
-                    {p.techStack.map((t, k) => (
-                      <span className="project-chip" key={k}>{t}</span>
-                    ))}
-                  </div>
-
-                  <ul className="project-highlights">
-                    {p.highlights.map((h, k) => (
-                      <li key={k}>
-                        <span className="project-hl-num" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="project-actions">
-                    <span className="project-cta-live">
-                      Lihat Live Demo
-                      <ExternalLink size={14} aria-hidden="true" />
-                    </span>
-                    <a
-                      className="project-cta-code"
-                      href={p.codeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Buka kode sumber ${p.title} di GitHub`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <GithubIcon size={14} />
-                      Kode
-                    </a>
-                  </div>
-                </div>
-
-                {/* Garis hijau bawah yang memanjang saat hover */}
-                <span className="project-card-line" aria-hidden="true"></span>
-                {/* Ikon panah pojok */}
-                <span className="project-corner" aria-hidden="true">
-                  <ArrowUpRight size={18} />
-                </span>
-              </a>
-            ))}
-          </div>
+          {/* Carousel — tambah objek di projectsList untuk slide berikutnya */}
+          <ProjectsCarousel projects={projectsList} />
         </div>
       </section>
 
